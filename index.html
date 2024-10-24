@@ -237,11 +237,11 @@
             <!-- Seção 3 -->
             <div class="form-section">
                 <h3>Produto e Demanda 1</h3>
-                <label for="produto_interesse1">Produto de interesse:</label>
+                <label for="produto_interesse1">Produto de interesse (English):</label>
                 <input type="text" id="produto_interesse1" name="produto_interesse1" required><br>
 
                 <label for="codigo_ncm1">Código NCM (Pelo menos 6 dígitos, sem "."):</label>
-                <input type="text" id="codigo_ncm1" name="codigo_ncm1" pattern="\d{6,}" required><br>
+                <input type="text" id="codigo_ncm1" name="codigo_ncm1" placeholder="19049000" pattern="\d{6,}" required oninput="this.value = this.value.replace(/\s/g, '');"><br>
 
                 <label for="quantidade_estimada1">Quantidade estimada:</label>
                 <input type="number" id="quantidade_estimada1" name="quantidade_estimada1" required><br>
@@ -259,11 +259,11 @@
             <!-- Seção 4 -->
             <div class="form-section">
                 <h3>Produto e Demanda 2</h3>
-                <label for="produto_interesse2">Produto de interesse:</label>
+                <label for="produto_interesse2">Produto de interesse(English):</label>
                 <input type="text" id="produto_interesse2" name="produto_interesse2" required><br>
 
                 <label for="codigo_ncm2">Código NCM (Pelo menos 6 dígitos, sem "."):</label>
-                <input type="text" id="codigo_ncm2" name="codigo_ncm2" pattern="\d{6,}" required><br>
+                <input type="text" id="codigo_ncm1" name="codigo_ncm1" placeholder="12122100" pattern="\d{6,}" required oninput="this.value = this.value.replace(/\s/g, '');"><br>
 
                 <label for="quantidade_estimada2">Quantidade estimada:</label>
                 <input type="number" id="quantidade_estimada2" name="quantidade_estimada2" required><br>
