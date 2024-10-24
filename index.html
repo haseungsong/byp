@@ -215,7 +215,17 @@
                 <input type="text" id="responsavel" name="responsavel" required><br>
 
                 <label for="departamento_cargo">Departamento e Cargo:</label>
-                <input type="text" id="departamento_cargo" name="departamento_cargo" required><br>
+                <div class="input-container">
+                    <input list="departamento-options" id="departamento_cargo" name="departamento_cargo" required>
+                    <datalist id="departamento-options">
+                        <option value="CEO"></option>
+                        <option value="DIRETOR"></option>
+                        <option value="MANAGER"></option>
+                        <option value="Gerente"></option>
+                        <option value="STAFF"></option>
+                        <option value="Coordinador"></option>
+                    </datalist>
+                </div><br>
 
                 <label for="email">E-mail:</label>
                 <input type="email" id="email" name="email" placeholder="kotra2024@kotra.com.br" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" required><br>
