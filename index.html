@@ -158,17 +158,17 @@
                 <input type="text" id="razao_social" name="razao_social" required><br>
 
                 <label for="cnpj">CNPJ (Formulário : 00.000.000/0000-00):</label>
-                <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" 
+                <input type="text" id="cnpj" name="cnpj" placeholder="EX: 00.000.000/0000-00" 
                        pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}" required><br>
 
                 <label for="endereco">Endereço :</label>
                 <input type="text" id="endereco" name="endereco" required><br>
        
                 <label for="cep">CEP (8 dígitos):</label>
-                <input type="tel" id="cep" name="cep" placeholder="01418100" pattern="\d{8}" maxlength="8" required><br>
+                <input type="tel" id="cep" name="cep" placeholder="EX: 01418100" pattern="\d{8}" maxlength="8" required><br>
 
                 <label for="website">Website:</label>
-                <input type="text" id="website" name="website" placeholder="www.kotra.com.br" pattern="^[a-zA-Z0-9.]+$"><br>
+                <input type="text" id="website" name="website" placeholder="EX: www.kotra.com.br" pattern="^[a-zA-Z0-9.]+$"><br>
 
                 <div class="input-container">
                     <label for="segmento">Segmento de Mercado:</label>
@@ -226,12 +226,14 @@
                         <option value="Coordinador"></option>
                     </datalist>
                 </div><br>
-
                 <label for="email">E-mail:</label>
-                <input type="email" id="email" name="email" placeholder="kotra2024@kotra.com.br" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" required><br>
+                <input type="email" id="email" name="email" placeholder="EX: kotra2024@kotra.com.br" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" required><br>
 
                 <label for="telefone_fixo">Telefone de contato fixo:</label>
-                <input type="tel" id="telefone_fixo" name="telefone_fixo" placeholder="551131753030" required><br>
+                <input type="tel" id="telefone_fixo" name="telefone_fixo" placeholder="EX: 551131753030" required><br>
+
+                <label for="telefone_celular">Telefone de contato celular:</label>
+                <input type="tel" id="telefone_celular" name="telefone_celular" placeholder="EX: 5511981451081" pattern="\d{2} \d{2} \d{5} \d{4}" required><br>
             </div>
 
             <!-- Seção 3 -->
@@ -241,7 +243,7 @@
                 <input type="text" id="produto_interesse1" name="produto_interesse1" required><br>
 
                 <label for="codigo_ncm1">Código NCM (Pelo menos 6 dígitos, sem "."):</label>
-                <input type="text" id="codigo_ncm1" name="codigo_ncm1" placeholder="19049000" pattern="\d{6,}" required oninput="this.value = this.value.replace(/\s/g, '');"><br>
+                <input type="text" id="codigo_ncm1" name="codigo_ncm1" placeholder="EX: 19049000" pattern="\d{6,}" required oninput="this.value = this.value.replace(/\s/g, '');"><br>
 
                 <label for="quantidade_estimada1">Quantidade estimada:</label>
                 <input type="number" id="quantidade_estimada1" name="quantidade_estimada1" required><br>
@@ -263,7 +265,7 @@
                 <input type="text" id="produto_interesse2" name="produto_interesse2" required><br>
 
                 <label for="codigo_ncm2">Código NCM (Pelo menos 6 dígitos, sem "."):</label>
-                <input type="text" id="codigo_ncm1" name="codigo_ncm1" placeholder="12122100" pattern="\d{6,}" required oninput="this.value = this.value.replace(/\s/g, '');"><br>
+                <input type="text" id="codigo_ncm1" name="codigo_ncm1" placeholder="EX: 12122100" pattern="\d{6,}" required oninput="this.value = this.value.replace(/\s/g, '');"><br>
 
                 <label for="quantidade_estimada2">Quantidade estimada:</label>
                 <input type="number" id="quantidade_estimada2" name="quantidade_estimada2" required><br>
@@ -318,17 +320,7 @@
                     <label for="uso_nao">Não</label>
                 </div>
 
-                <label for="cargo">Cargo:</label>
-                <input type="text" id="cargo" name="cargo" required><br>
 
-                <label for="cep">CEP (Formulário : 00000-000):</label>
-                <input type="text" id="cep" name="cep" pattern="\d{5}-\d{3}" required><br>
-
-                <label for="cidade_estado">Cidade / Estado (Exp. : Curitiba / Parana):</label>
-                <input type="text" id="cidade_estado" name="cidade_estado" required><br>
-
-                <label for="telefone_celular">Telefone de contato celular (55 00 00000 0000):</label>
-                <input type="tel" id="telefone_celular" name="telefone_celular" pattern="\d{2} \d{2} \d{5} \d{4}" required><br>
             </div>
 
             <button type="submit" class="submit-btn">Submit</button>
