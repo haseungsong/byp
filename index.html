@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Formulário de Importação</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        html, body {
+        html,
+        body {
             overflow-x: hidden;
         }
 
@@ -28,7 +30,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        h2, h3 {
+        h2,
+        h3 {
             color: #007BFF;
             margin-bottom: 20px;
         }
@@ -39,7 +42,9 @@
             margin-bottom: 5px;
         }
 
-        input, textarea {
+        input,
+        textarea,
+        select {
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 20px;
@@ -49,7 +54,9 @@
             transition: border-color 0.3s;
         }
 
-        input:focus, textarea:focus {
+        input:focus,
+        textarea:focus,
+        select:focus {
             border-color: #007BFF;
         }
 
@@ -115,9 +122,12 @@
                 width: 95%;
                 padding: 15px;
             }
-            h2, h3 {
+
+            h2,
+            h3 {
                 font-size: 1.5em;
             }
+
             .submit-btn {
                 width: auto;
                 padding: 10px;
@@ -125,7 +135,9 @@
                 right: 10px;
                 top: 10px;
             }
-            input, textarea {
+
+            input,
+            textarea {
                 font-size: 14px;
             }
         }
@@ -143,14 +155,90 @@
         }
         window.onload = setCurrentDateTime;
     </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('form').submit(function (event) {
+            event.preventDefault();
+            const formData = $(this).serialize();
+            $.ajax({
+                type: 'POST',
+                url: '/submit',
+                data: formData,
+                success: function (response) {
+                    alert('Formulário enviado com sucesso!');
+                },
+                error: function () {
+                    alert('Erro ao enviar o formulário. Por favor, tente novamente.');
+                }
+            });
+        });
+    });
+</script>
+
 </head>
+
 <body>
     <div class="container">
-        <h2>Formulário de Kotra Inquiry</h2>
-        <form onsubmit="return validateForm()">
+        <h2 style="font-size: 1.8em; color: #000;">Formulário de Kotra Inquiry</h2>
+        <form action="/submit" method="POST" onsubmit="return validateForm()">
+    <script>
+        function validateForm() {
+            const especialistaInput = document.getElementById('atendimento_especialista');
+            const datalist = document.getElementById('especialistas-options');
+            const options = Array.from(datalist.options).map(option => option.value);
+            const inputValue = especialistaInput.value;
+            if (!options.includes(inputValue) || inputValue.trim() !== inputValue) {
+                alert('Por favor, selecione um nome válido dos nossos especialistas, sem espaços extras no início ou no final.');
+                especialistaInput.focus();
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <script>
+        function validateForm() {
+            const especialistaInput = document.getElementById('atendimento_especialista');
+            const datalist = document.getElementById('especialistas-options');
+            const options = Array.from(datalist.options).map(option => option.value.trim());
+            const inputValue = especialistaInput.value.trim();
+            if (!options.includes(inputValue) || inputValue === '') {
+                alert('Por favor, selecione um nome válido dos nossos especialistas.');
+                especialistaInput.focus();
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <script>
+        function validateForm() {
+            const especialistaInput = document.getElementById('atendimento_especialista');
+            const datalist = document.getElementById('especialistas-options');
+            const options = Array.from(datalist.options).map(option => option.value);
+            if (!options.includes(especialistaInput.value) || especialistaInput.value.trim() === '') {
+                alert('Por favor, selecione um nome válido dos nossos especialistas.');
+                especialistaInput.focus();
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <script>
+        function validateForm() {
+            const especialistaInput = document.getElementById('atendimento_especialista');
+            const datalist = document.getElementById('especialistas-options');
+            const options = Array.from(datalist.options).map(option => option.value);
+            if (!options.includes(especialistaInput.value)) {
+                alert('Por favor, selecione um nome válido dos nossos especialistas.');
+                especialistaInput.focus();
+                return false;
+            }
+            return true;
+        }
+    </script>
             <!-- Seção 1 -->
             <div class="form-section">
-                <h3>Informações Gerais</h3>
+                <h3>■ Informações Gerais</h3>
                 <label for="timestamp">Timestamp:</label>
                 <input type="text" id="timestamp" name="timestamp" readonly><br>
 
@@ -158,12 +246,11 @@
                 <input type="text" id="razao_social" name="razao_social" required><br>
 
                 <label for="cnpj">CNPJ (Formulário : 00.000.000/0000-00):</label>
-                <input type="text" id="cnpj" name="cnpj" placeholder="EX: 00.000.000/0000-00" 
-                       pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}" required><br>
+                <input type="text" id="cnpj" name="cnpj" placeholder="EX: 00.000.000/0000-00" pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}" required><br>
 
                 <label for="endereco">Endereço :</label>
                 <input type="text" id="endereco" name="endereco" required><br>
-       
+
                 <label for="cep">CEP (8 dígitos):</label>
                 <input type="tel" id="cep" name="cep" placeholder="EX: 01418100" pattern="\d{8}" maxlength="8" required><br>
 
@@ -205,27 +292,26 @@
                         <option value="Prestadora"></option>
                         <option value="Agente"></option>
                     </datalist>
-                </div><br>
+                </div>
             </div>
 
             <!-- Seção 2 -->
             <div class="form-section">
-                <h3>Contato</h3>
+                <h3>■ Contato</h3>
                 <label for="responsavel">Nome do Responsável (Sem Mr or Ms):</label>
                 <input type="text" id="responsavel" name="responsavel" required><br>
 
                 <label for="departamento_cargo">Departamento e Cargo:</label>
-                <div class="input-container">
-                    <input list="departamento-options" id="departamento_cargo" name="departamento_cargo" required>
-                    <datalist id="departamento-options">
-                        <option value="CEO"></option>
-                        <option value="DIRETOR"></option>
-                        <option value="MANAGER"></option>
-                        <option value="Gerente"></option>
-                        <option value="STAFF"></option>
-                        <option value="Coordinador"></option>
-                    </datalist>
-                </div><br>
+                <input list="departamento-options" id="departamento_cargo" name="departamento_cargo" style="width: calc(100% - 20px); margin-bottom: 20px;" required>
+                <datalist id="departamento-options">
+                    <option value="CEO"></option>
+                    <option value="DIRETOR"></option>
+                    <option value="MANAGER"></option>
+                    <option value="Gerente"></option>
+                    <option value="STAFF"></option>
+                    <option value="Coordinador"></option>
+                </datalist>
+
                 <label for="email">E-mail:</label>
                 <input type="email" id="email" name="email" placeholder="EX: kotra2024@kotra.com.br" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" required><br>
 
@@ -238,9 +324,16 @@
 
             <!-- Seção 3 -->
             <div class="form-section">
-                <h3>Produto e Demanda 1</h3>
-                <label for="produto_interesse1">Produto de interesse (English):</label>
-                <input type="text" id="produto_interesse1" name="produto_interesse1" required><br>
+                <h3>■ Produto e Demanda 1</h3>
+                <div class="input-container">
+                    <label for="publicacao1">Publicação:</label>
+                    <select id="publicacao1" name="publicacao1" style="width: 130px; margin-right: 10px;" required>
+                        <option value="Non-Pub" style="font-size: 0.8em;">Non-Pub</option>
+                        <option value="Pub" style="font-size: 0.8em;">Pub</option>
+                    </select>
+                    <label for="produto_interesse1">Produto de interesse (English):</label>
+                    <input type="text" id="produto_interesse1" name="produto_interesse1" required>
+                </div>
 
                 <label for="codigo_ncm1">Código NCM (Pelo menos 6 dígitos, sem "."):</label>
                 <input type="text" id="codigo_ncm1" name="codigo_ncm1" placeholder="EX: 19049000" pattern="\d{6,}" required oninput="this.value = this.value.replace(/\s/g, '');"><br>
@@ -260,12 +353,19 @@
 
             <!-- Seção 4 -->
             <div class="form-section">
-                <h3>Produto e Demanda 2</h3>
-                <label for="produto_interesse2">Produto de interesse(English):</label>
-                <input type="text" id="produto_interesse2" name="produto_interesse2" required><br>
+                <h3>■ Produto e Demanda 2</h3>
+                <div class="input-container">
+                    <label for="publicacao2">Publicação:</label>
+                    <select id="publicacao2" name="publicacao2" style="width: 130px; margin-right: 10px;" required>
+                        <option value="Non-Pub" style="font-size: 0.8em;">Non-Pub</option>
+                        <option value="Pub" style="font-size: 0.8em;">Pub</option>
+                    </select>
+                    <label for="produto_interesse2">Produto de interesse (English):</label>
+                    <input type="text" id="produto_interesse2" name="produto_interesse2" required>
+                </div>
 
                 <label for="codigo_ncm2">Código NCM (Pelo menos 6 dígitos, sem "."):</label>
-                <input type="text" id="codigo_ncm1" name="codigo_ncm1" placeholder="EX: 12122100" pattern="\d{6,}" required oninput="this.value = this.value.replace(/\s/g, '');"><br>
+                <input type="text" id="codigo_ncm2" name="codigo_ncm2" placeholder="EX: 12122100" pattern="\d{6,}" required oninput="this.value = this.value.replace(/\s/g, '');"><br>
 
                 <label for="quantidade_estimada2">Quantidade estimada:</label>
                 <input type="number" id="quantidade_estimada2" name="quantidade_estimada2" required><br>
@@ -282,49 +382,60 @@
 
             <!-- Seção 5 -->
             <div class="form-section">
-                <h3>Importação</h3>
-                <label> Sua empresa já importou produtos diretamente?</label><br>
-                <div class="radio-group">
-                    <input type="radio" id="importou_sim" name="importou_produtos" value="sim" required>
-                    <label for="importou_sim">Sim</label>
-                    <input type="radio" id="importou_nao" name="importou_produtos" value="nao" required>
-                    <label for="importou_nao">Não</label>
-                </div>
+                <h3>■ Importação</h3>
+                <label for="importou_produtos">Sua empresa já importou produtos diretamente?</label><br>
+                <select id="importou_produtos" name="importou_produtos" required>
+                    <option value="Sim" selected>Sim</option>
+                    <option value="Não">Não</option>
+                </select>
 
                 <label for="paises_importa">Importa de quais países?</label>
                 <input type="text" id="paises_importa" name="paises_importa" required><br>
 
-                <label>Já importou da Coreia do Sul?</label><br>
-                <div class="radio-group">
-                    <input type="radio" id="importa_sim" name="importa_coreia" value="sim" required>
-                    <label for="importa_sim">Sim</label>
-                    <input type="radio" id="importa_nao" name="importa_coreia" value="nao" required>
-                    <label for="importa_nao">Não</label>
-                </div>
+                <label for="importa_coreia">Já importou da Coreia do Sul?</label><br>
+                <select id="importa_coreia" name="importa_coreia" required>
+                    <option value="sim" selected>Sim</option>
+                    <option value="nao">Não</option>
+                </select><br>
 
                 <label for="empresas_coreanas_importa">De quais empresas coreanas vocês importam?</label>
                 <input type="text" id="empresas_coreanas_importa" name="empresas_coreanas_importa" required><br>
 
                 <label for="atendimento_especialista">Já foi atendido por algum de nossos especialistas? Se sim, descreva o nome:</label>
-                <input type="text" id="atendimento_especialista" name="atendimento_especialista" required><br>
+                <div class="input-container">
+                    <input list="especialistas-options" id="atendimento_especialista" name="atendimento_especialista" required>
+                    <datalist id="especialistas-options">
+                        <option value="Alex"></option>
+                        <option value="Camila"></option>
+                        <option value="Emanoel"></option>
+                        <option value="Ester"></option>
+                        <option value="Gabriela"></option>
+                        <option value="Hilton"></option>
+                        <option value="Jonny"></option>
+                        <option value="Rafael"></option>
+                        <option value="Renan"></option>
+                        <option value="Rene"></option>
+                        <option value="Ricardo"></option>
+                        <option value="Tathiana"></option>
+                        <option value="Vitor"></option>
+                        <option value="Viviane"></option>
+                    </datalist>
+                </div>
             </div>
 
             <!-- Seção 6 -->
             <div class="form-section">
-                <h3>Informações Adicionais</h3>
-                <label>Uso consciente das informações:</label><br>
-                <div class="radio-group">
-                    <input type="radio" id="uso_sim" name="uso_consciente" value="sim" required>
-                    <label for="uso_sim">Sim</label>
-                    <input type="radio" id="uso_nao" name="uso_consciente" value="nao" required>
-                    <label for="uso_nao">Não</label>
-                </div>
-
-
+                <h3>■ Informações Adicionais</h3>
+                <label for="uso_consciente">Uso consciente das informações:</label><br>
+                <select id="uso_consciente" name="uso_consciente" required>
+                    <option value="sim" selected>Sim</option>
+                    <option value="nao">Não</option>
+                </select>
             </div>
 
             <button type="submit" class="submit-btn">Submit</button>
         </form>
     </div>
 </body>
+
 </html>
