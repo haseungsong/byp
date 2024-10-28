@@ -163,7 +163,7 @@
             const formData = $(this).serialize();
             $.ajax({
                 type: 'POST',
-                url: '/submit',
+                url: 'https://rrdedgna07.execute-api.us-east-2.amazonaws.com/BYP',
                 data: formData,
                 success: function (response) {
                     alert('Formulário enviado com sucesso!');
@@ -319,7 +319,7 @@
                 <input type="tel" id="telefone_fixo" name="telefone_fixo" placeholder="EX: 551131753030" required><br>
 
                 <label for="telefone_celular">Telefone de contato celular:</label>
-                <input type="tel" id="telefone_celular" name="telefone_celular" placeholder="EX: 5511981451081" pattern="\d{2} \d{2} \d{5} \d{4}" required><br>
+                <input type="tel" id="telefone_celular" name="telefone_celular" placeholder="EX: 5511981451081" pattern="\d{2}\d{2}\d{5}\d{4}" required><br>
             </div>
 
             <!-- Seção 3 -->
@@ -356,28 +356,28 @@
                 <h3>■ Produto e Demanda 2</h3>
                 <div class="input-container">
                     <label for="publicacao2">Publicação:</label>
-                    <select id="publicacao2" name="publicacao2" style="width: 130px; margin-right: 10px;" required>
+                    <select id="publicacao2" name="publicacao2" style="width: 130px; margin-right: 10px;">
                         <option value="Non-Pub" style="font-size: 0.8em;">Non-Pub</option>
                         <option value="Pub" style="font-size: 0.8em;">Pub</option>
                     </select>
                     <label for="produto_interesse2">Produto de interesse (English):</label>
-                    <input type="text" id="produto_interesse2" name="produto_interesse2" required>
+                    <input type="text" id="produto_interesse2" name="produto_interesse2">
                 </div>
 
                 <label for="codigo_ncm2">Código NCM (Pelo menos 6 dígitos, sem "."):</label>
-                <input type="text" id="codigo_ncm2" name="codigo_ncm2" placeholder="EX: 12122100" pattern="\d{6,}" required oninput="this.value = this.value.replace(/\s/g, '');"><br>
+                <input type="text" id="codigo_ncm2" name="codigo_ncm2" placeholder="EX: 12122100" pattern="\d{6,}" oninput="this.value = this.value.replace(/\s/g, '');"><br>
 
                 <label for="quantidade_estimada2">Quantidade estimada:</label>
-                <input type="number" id="quantidade_estimada2" name="quantidade_estimada2" required><br>
+                <input type="number" id="quantidade_estimada2" name="quantidade_estimada2"><br>
 
                 <label for="motivo_demanda2">Motivo da demanda:</label>
-                <textarea id="motivo_demanda2" name="motivo_demanda2" required></textarea><br>
+                <textarea id="motivo_demanda2" name="motivo_demanda2"></textarea><br>
 
                 <label for="perfil_busca_fornecedores2">Qual o perfil da busca de fornecedores?</label>
-                <textarea id="perfil_busca_fornecedores2" name="perfil_busca_fornecedores2" required></textarea><br>
+                <textarea id="perfil_busca_fornecedores2" name="perfil_busca_fornecedores2"></textarea><br>
 
                 <label for="empresa_coreana2">Nome da empresa Coreana:</label>
-                <input type="text" id="empresa_coreana2" name="empresa_coreana2" required><br>
+                <input type="text" id="empresa_coreana2" name="empresa_coreana2"><br>
             </div>
 
             <!-- Seção 5 -->
@@ -390,7 +390,7 @@
                 </select>
 
                 <label for="paises_importa">Importa de quais países?</label>
-                <input type="text" id="paises_importa" name="paises_importa" required><br>
+                <input type="text" id="paises_importa" name="paises_importa"><br>
 
                 <label for="importa_coreia">Já importou da Coreia do Sul?</label><br>
                 <select id="importa_coreia" name="importa_coreia" required>
@@ -399,7 +399,7 @@
                 </select><br>
 
                 <label for="empresas_coreanas_importa">De quais empresas coreanas vocês importam?</label>
-                <input type="text" id="empresas_coreanas_importa" name="empresas_coreanas_importa" required><br>
+                <input type="text" id="empresas_coreanas_importa" name="empresas_coreanas_importa"><br>
 
                 <label for="atendimento_especialista">Já foi atendido por algum de nossos especialistas? Se sim, descreva o nome:</label>
                 <div class="input-container">
