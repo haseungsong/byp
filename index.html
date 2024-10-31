@@ -158,6 +158,22 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
+        // Load past values from localStorage if available
+        $('input, textarea, select').each(function () {
+            const fieldId = $(this).attr('id');
+            const savedValue = localStorage.getItem(fieldId);
+            if (savedValue) {
+                $(this).val(savedValue);
+            }
+        });
+
+        // Save field values to localStorage on change
+        $('input, textarea, select').on('input change', function () {
+            const fieldId = $(this).attr('id');
+            const fieldValue = $(this).val();
+            localStorage.setItem(fieldId, fieldValue);
+        });
+
         $('form').submit(function (event) {
             event.preventDefault();
             const formData = $(this).serialize();
