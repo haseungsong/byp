@@ -6,7 +6,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Formulário de Importação</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script>
+        const csvUrl = 'https://raw.githubusercontent.com/haseungsong/byp/refs/heads/main/CNPJ%20DB.csv';
+
+        async function fetchCSV() {
+            try {
+                const response = await fetch(csvUrl);
+                if (!response.ok) throw new Error('CSV 파일을 가져올 수 없습니다.');
+                const csvText = await response.text();
+                return csvText;
+            } catch (error) {
+                console.error('CSV 파일 로드 에러:', error);
+                alert('CSV 파일을 로드하는 중 문제가 발생했습니다.');
+            }
+        }
+        async function parseCSV() {
+            const csvData = await fetchCSV();
+            if (!csvData) return null;
+
+            const parsedData = Papa.parse(csvData, {
+                header: true,
+                skipEmptyLines: true,
+            });
+
+            return parsedData.data;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchButton = document.getElementById('cnpj-search');
+            
+            if (searchButton) {
+                searchButton.addEventListener('click', async () => {
+                    const cnpjInput = document.getElementById('cnpj').value.trim();
+
+                    // 유효성 검사
+                    if (!cnpjInput) {
+                        alert('CNPJ를 입력하세요.');
+                        return;
+                    }
+
+                    // CSV 데이터 로드 및 검색
+                    const data = await parseCSV();
+                    if (!data) {
+                        alert('CSV 데이터를 로드하지 못했습니다.');
+                        return;
+                    }
+
+                    // 입력한 CNPJ와 일치하는 데이터 검색
+                    const results = data.filter(row => row.CNPJ.includes(cnpjInput));
+                    const resultsList = document.getElementById('results-list');
+                    const resultsContainer = document.getElementById('search-results');
+
+                    // 검색 결과 초기화
+                    resultsList.innerHTML = '';
+
+                    if (results.length > 0) {
+                        // 검색 결과 표시
+                        results.forEach(result => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `${result.CNPJ} - ${result.NOME}`;
+                            listItem.style.cursor = 'pointer';
+                            listItem.style.marginBottom = '5px';
+                            listItem.addEventListener('click', () => {
+                                // 선택한 결과를 폼에 채움
+                                document.getElementById('razao_social').value = result['NOME'] || '';
+                                document.getElementById('endereco').value = result['END.'] || '';
+                                document.getElementById('website').value = result['SITE'] || '';
+                                document.getElementById('cnpj').value = result['CNPJ'] || '';
+
+                                // 검색 결과 숨김
+                                resultsContainer.style.display = 'none';
+                            });
+                            resultsList.appendChild(listItem);
+                        });
+                        resultsContainer.style.display = 'block';
+                    } else {
+                        // 검색 결과가 없는 경우
+                        alert('해당 CNPJ와 일치하는 결과가 없습니다.');
+                        resultsContainer.style.display = 'none';
+                    }
+                });
+            } else {
+                console.error('검색 버튼(#cnpj-search)을 찾을 수 없습니다.');
+            }
+        });
+    </script>     
     <style>
+
+        #results-list li:hover {
+            background: #e6f7ff;
+            color: #007BFF;
+        }
+        /* 필수 필드 강조 스타일 */
+        .required {
+                color: #ff3c00; /* 파란색으로 강조 */
+            }
         html,
         body {
             overflow-x: hidden;
@@ -142,6 +237,51 @@
             }
         }
     </style>
+
+        <script type="module">
+                import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+                import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+            // Firebase 초기화
+            const firebaseConfig = {
+                apiKey: "AIzaSyANctE1XUAzT7rFVfctxmYgUUHXSxpmTJA",
+                authDomain: "kotrasp-byp.firebaseapp.com",
+                databaseURL: "https://kotrasp-byp-default-rtdb.firebaseio.com",
+                projectId: "kotrasp-byp",
+                storageBucket: "kotrasp-byp.firebasestorage.app",
+                messagingSenderId: "846506101330",
+                appId: "1:846506101330:web:2e9430342b03a2e11ded8b"
+            };
+
+        // Firebase 초기화
+            const app = initializeApp(firebaseConfig);
+            const database = getDatabase(app);
+
+        // Firebase에 데이터 저장 함수
+        // Firebase에 데이터 저장 함수
+        function saveToFirebase(event) {
+            event.preventDefault(); // 폼 제출 방지
+            const formData = new FormData(event.target); // 폼 데이터 가져오기
+            const dataObject = {};
+            formData.forEach((value, key) => {
+                dataObject[key] = value;
+            });
+
+            const formsRef = ref(database, 'forms'); // Firebase 경로 설정
+            push(formsRef, dataObject) // 데이터 푸시
+                .then(() => {
+                    alert('Formulário enviado com sucesso!');
+                    event.target.reset();
+                })
+                .catch((error) => {
+                    alert('Erro ao enviar o formulário. Por favor, tente novamente.');
+                    console.error('Error saving to Firebase:', error);
+                });
+        }
+            // 함수를 전역 범위로 노출
+            window.saveToFirebase = saveToFirebase;
+    </script>
+
     <script>
         function setCurrentDateTime() {
             const now = new Date();
@@ -197,7 +337,7 @@
 <body>
     <div class="container">
         <h2 style="font-size: 1.8em; color: #000;">Formulário de Kotra Inquiry</h2>
-        <form action="/submit" method="POST" onsubmit="return validateForm()">
+        <form onsubmit="saveToFirebase(event)">
     <script>
         function validateForm() {
             const especialistaInput = document.getElementById('atendimento_especialista');
@@ -258,23 +398,35 @@
                 <label for="timestamp">Timestamp:</label>
                 <input type="text" id="timestamp" name="timestamp" readonly><br>
 
-                <label for="razao_social">Razão Social (Nome completo do CNPJ):</label>
+                <label for="razao_social" class="required">Razão Social (Nome completo do CNPJ):</label>
                 <input type="text" id="razao_social" name="razao_social" required><br>
 
-                <label for="cnpj">CNPJ (Formulário : 00.000.000/0000-00):</label>
-                <input type="text" id="cnpj" name="cnpj" placeholder="EX: 00.000.000/0000-00" pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}" required><br>
+                <div>
+                    <label for="cnpj" class="required" style="font-weight: bold;">
+                        CNPJ (Formulário : 00.000.000/0000-00):
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="text" id="cnpj" name="cnpj" placeholder="EX: 00.000.000/0000-00" required>
+                        <button id="cnpj-search" type="button" style="background: none; border: none; cursor: pointer; font-size: 1.2em;">
+                            🔍
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 검색 결과 표시 영역 -->
+                <div id="search-results" style="display: none; margin-top: 20px; border: 1px solid #ccc; border-radius: 5px; padding: 10px; background: #f9f9f9;">
+                    <h4>검색 결과:</h4>
+                    <ul id="results-list" style="list-style: none; padding: 0;"></ul>
+                </div>
 
-                <label for="endereco">Endereço :</label>
+                <label for="endereco" class="required">Endereço:</label>
                 <input type="text" id="endereco" name="endereco" required><br>
 
-                <label for="cep">CEP (8 dígitos):</label>
-                <input type="tel" id="cep" name="cep" placeholder="EX: 01418100" pattern="\d{8}" maxlength="8" required><br>
-
-                <label for="website">Website:</label>
-                <input type="text" id="website" name="website" placeholder="EX: www.kotra.com.br" pattern="^[a-zA-Z0-9.]+$"><br>
+                <label for="website" class="required">Website:</label>
+                <input type="text" id="website" name="website" required><br>
 
                 <div class="input-container">
-                    <label for="segmento">Segmento de Mercado:</label>
+                    <label for="segmento" class="required">Segmento de Mercado:</label>
                     <input list="segmento-options" id="segmento" name="segmento" required>
                     <datalist id="segmento-options">
                         <option value="Automobiles & Vehicles"></option>
@@ -294,7 +446,7 @@
                     </datalist>
                 </div>
 
-                <label for="formato_negocio">Formato do negócio:</label>
+                <label for="formato_negocio" class="required">Formato do negócio:</label>
                 <div class="input-container">
                     <input list="formato-options" id="formato_negocio" name="formato_negocio" required>
                     <datalist id="formato-options">
@@ -314,10 +466,10 @@
             <!-- Seção 2 -->
             <div class="form-section">
                 <h3>■ Contato</h3>
-                <label for="responsavel">Nome do Responsável (Sem Mr or Ms):</label>
+                <label for="responsavel" class="required">Nome do Responsável (Sem Mr or Ms):</label>
                 <input type="text" id="responsavel" name="responsavel" required><br>
 
-                <label for="departamento_cargo">Departamento e Cargo:</label>
+                <label for="departamento_cargo" class="required">Departamento e Cargo:</label>
                 <input list="departamento-options" id="departamento_cargo" name="departamento_cargo" style="width: calc(100% - 20px); margin-bottom: 20px;" required>
                 <datalist id="departamento-options">
                     <option value="CEO"></option>
@@ -328,13 +480,13 @@
                     <option value="Coordinador"></option>
                 </datalist>
 
-                <label for="email">E-mail:</label>
+                <label for="email" class="required">E-mail:</label>
                 <input type="email" id="email" name="email" placeholder="EX: kotra2024@kotra.com.br" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" required><br>
 
-                <label for="telefone_fixo">Telefone de contato fixo:</label>
+                <label for="telefone_fixo" class="required">Telefone de contato fixo:</label>
                 <input type="tel" id="telefone_fixo" name="telefone_fixo" placeholder="EX: 551131753030" required><br>
 
-                <label for="telefone_celular">Telefone de contato celular:</label>
+                <label for="telefone_celular" class="required">Telefone de contato celular:</label>
                 <input type="tel" id="telefone_celular" name="telefone_celular" placeholder="EX: 5511981451081" pattern="\d{2}\d{2}\d{5}\d{4}" required><br>
             </div>
 
@@ -342,28 +494,28 @@
             <div class="form-section">
                 <h3>■ Produto e Demanda 1</h3>
                 <div class="input-container">
-                    <label for="publicacao1">Publicação:</label>
+                    <label for="publicacao1" class="required">Publicação:</label>
                     <select id="publicacao1" name="publicacao1" style="width: 130px; margin-right: 10px;" required>
                         <option value="Non-Pub" style="font-size: 0.8em;">Non-Pub</option>
                         <option value="Pub" style="font-size: 0.8em;">Pub</option>
                     </select>
-                    <label for="produto_interesse1">Produto de interesse (English):</label>
+                    <label for="produto_interesse1" class="required">Produto de interesse (English):</label>
                     <input type="text" id="produto_interesse1" name="produto_interesse1" required>
                 </div>
 
                 <label for="codigo_ncm1">Código NCM (Pelo menos 6 dígitos, sem "."):</label>
                 <input type="text" id="codigo_ncm1" name="codigo_ncm1" placeholder="EX: 19049000" pattern="\d{6,}" required oninput="this.value = this.value.replace(/\s/g, '');"><br>
 
-                <label for="quantidade_estimada1">Quantidade estimada:</label>
+                <label for="quantidade_estimada1" class="required">Quantidade estimada:</label>
                 <input type="number" id="quantidade_estimada1" name="quantidade_estimada1" required><br>
 
-                <label for="motivo_demanda1">Motivo da demanda:</label>
+                <label for="motivo_demanda1" class="required">Motivo da demanda:</label>
                 <textarea id="motivo_demanda1" name="motivo_demanda1" required></textarea><br>
 
-                <label for="perfil_busca_fornecedores1">Qual o perfil da busca de fornecedores?</label>
+                <label for="perfil_busca_fornecedores1" class="required">Qual o perfil da busca de fornecedores?</label>
                 <textarea id="perfil_busca_fornecedores1" name="perfil_busca_fornecedores1" required></textarea><br>
 
-                <label for="empresa_coreana1">Nome da empresa Coreana:</label>
+                <label for="empresa_coreana1" class="required">Nome da empresa Coreana:</label>
                 <input type="text" id="empresa_coreana1" name="empresa_coreana1" required><br>
             </div>
 
@@ -399,7 +551,7 @@
             <!-- Seção 5 -->
             <div class="form-section">
                 <h3>■ Importação</h3>
-                <label for="importou_produtos">Sua empresa já importou produtos diretamente?</label><br>
+                <label for="importou_produtos" class="required">Sua empresa já importou produtos diretamente?</label><br>
                 <select id="importou_produtos" name="importou_produtos" required>
                     <option value="Sim" selected>Sim</option>
                     <option value="Não">Não</option>
@@ -408,7 +560,7 @@
                 <label for="paises_importa">Importa de quais países?</label>
                 <input type="text" id="paises_importa" name="paises_importa"><br>
 
-                <label for="importa_coreia">Já importou da Coreia do Sul?</label><br>
+                <label for="importa_coreia" class="required">Já importou da Coreia do Sul?</label><br>
                 <select id="importa_coreia" name="importa_coreia" required>
                     <option value="sim" selected>Sim</option>
                     <option value="nao">Não</option>
@@ -417,7 +569,7 @@
                 <label for="empresas_coreanas_importa">De quais empresas coreanas vocês importam?</label>
                 <input type="text" id="empresas_coreanas_importa" name="empresas_coreanas_importa"><br>
 
-                <label for="atendimento_especialista">Já foi atendido por algum de nossos especialistas? Se sim, descreva o nome:</label>
+                <label for="atendimento_especialista" class="required">Já foi atendido por algum de nossos especialistas? Se sim, descreva o nome:</label>
                 <div class="input-container">
                     <input list="especialistas-options" id="atendimento_especialista" name="atendimento_especialista" required>
                     <datalist id="especialistas-options">
@@ -442,7 +594,7 @@
             <!-- Seção 6 -->
             <div class="form-section">
                 <h3>■ Informações Adicionais</h3>
-                <label for="uso_consciente">Uso consciente das informações:</label><br>
+                <label for="uso_consciente" class="required">Uso consciente das informações:</label><br>
                 <select id="uso_consciente" name="uso_consciente" required>
                     <option value="sim" selected>Sim</option>
                     <option value="nao">Não</option>
