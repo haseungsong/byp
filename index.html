@@ -34,88 +34,132 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const searchButton = document.getElementById('cnpj-search');
-            
-            if (searchButton) {
-                searchButton.addEventListener('click', async () => {
-                    const cnpjInput = document.getElementById('cnpj').value.trim();
+            // Razão Social 검색
+            const razaoSocialSearchButton = document.getElementById('razao-social-search');
+            const razaoSocialInput = document.getElementById('razao_social'); // 입력 필드 참조 추가
+            if (razaoSocialSearchButton) {
+                razaoSocialSearchButton.addEventListener('click', async () => {
+                    const razaoSocialInput = document.getElementById('razao_social').value.trim();
 
-                    // 유효성 검사
-                    if (!cnpjInput) {
-                        alert('CNPJ를 입력하세요.');
+                    // 입력값 확인
+                    if (!razaoSocialInput) {
+                        alert('Razão Social을 입력하세요.');
                         return;
                     }
 
-                    // CSV 데이터 로드 및 검색
+                    // CSV 데이터 로드
                     const data = await parseCSV();
                     if (!data) {
                         alert('CSV 데이터를 로드하지 못했습니다.');
                         return;
                     }
 
-                    // 입력한 CNPJ와 일치하는 데이터 검색
-                    const results = data.filter(row => row.CNPJ.includes(cnpjInput));
-                    const resultsList = document.getElementById('results-list');
-                    const resultsContainer = document.getElementById('search-results');
+                    // Razão Social 검색
+                    const results = data.filter(row => row.NOME && row.NOME.toLowerCase().includes(razaoSocialInput.toLowerCase()));
+                    const resultsList = document.getElementById('razao-social-results-list');
+                    const resultsContainer = document.getElementById('razao-social-results');
 
-                    // 검색 결과 초기화
+                    // 결과 초기화
                     resultsList.innerHTML = '';
 
                     if (results.length > 0) {
-                        // 검색 결과 표시
+                        results.forEach(result => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `${result.NOME} - ${result.CNPJ}`;
+                            listItem.style.cursor = 'pointer';
+                            listItem.style.marginBottom = '5px';
+
+                            // 결과 선택 시 값 입력
+                            listItem.addEventListener('click', () => {
+                                document.getElementById('razao_social').value = result['NOME'] || '';
+                                document.getElementById('cnpj').value = result['CNPJ'] || '';
+                                document.getElementById('endereco').value = result['END.'] || '';
+                                document.getElementById('website').value = result['SITE'] || '';
+                                document.getElementById('segmento').value = result['SEG'] || '';
+                                document.getElementById('formato_negocio').value = result['FOMATO'] || '';
+                                document.getElementById('telefone_fixo').value = result['TFIXO'] || '';
+                                document.getElementById('email').value = result['EMAIL'] || '';
+                                document.getElementById('paises_importa').value = result['PAISES'] || '';
+                                document.getElementById('departamento_cargo').value = result['CARGO'] || '';
+
+                                // 결과 숨기기
+                                resultsContainer.style.display = 'none';
+                            });
+
+                            resultsList.appendChild(listItem);
+                        });
+                        resultsContainer.style.display = 'block';
+                    } else {
+                        alert('해당 Razão Social과 일치하는 결과가 없습니다.');
+                        resultsContainer.style.display = 'none';
+                    }
+                });
+
+                // Enter 키로 검색 버튼 클릭 트리거
+                    razaoSocialInput.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter') {
+                            event.preventDefault(); // 기본 Enter 동작 방지 (폼 제출 방지)
+                            razaoSocialSearchButton.click(); // 버튼 클릭 이벤트 트리거
+                        }
+                    });
+            }
+
+            // CNPJ 검색
+            const searchButton = document.getElementById('cnpj-search');
+            if (searchButton) {
+                searchButton.addEventListener('click', async () => {
+                    const cnpjInput = document.getElementById('cnpj').value.trim();
+
+                    if (!cnpjInput) {
+                        alert('CNPJ를 입력하세요.');
+                        return;
+                    }
+
+                    const data = await parseCSV();
+                    if (!data) {
+                        alert('CSV 데이터를 로드하지 못했습니다.');
+                        return;
+                    }
+
+                    const results = data.filter(row => row.CNPJ && row.CNPJ.includes(cnpjInput));
+                    const resultsList = document.getElementById('results-list');
+                    const resultsContainer = document.getElementById('search-results');
+
+                    resultsList.innerHTML = '';
+
+                    if (results.length > 0) {
                         results.forEach(result => {
                             const listItem = document.createElement('li');
                             listItem.textContent = `${result.CNPJ} - ${result.NOME}`;
                             listItem.style.cursor = 'pointer';
                             listItem.style.marginBottom = '5px';
+
                             listItem.addEventListener('click', () => {
-                                // 선택한 결과를 폼에 채움
                                 document.getElementById('razao_social').value = result['NOME'] || '';
+                                document.getElementById('cnpj').value = result['CNPJ'] || '';
                                 document.getElementById('endereco').value = result['END.'] || '';
                                 document.getElementById('website').value = result['SITE'] || '';
-                                document.getElementById('cnpj').value = result['CNPJ'] || '';
-
-                                 // SEG., FOMATO, TFIXO 추가
                                 document.getElementById('segmento').value = result['SEG'] || '';
                                 document.getElementById('formato_negocio').value = result['FOMATO'] || '';
                                 document.getElementById('telefone_fixo').value = result['TFIXO'] || '';
-
-                                 // 새로 추가된 필드에 값 채우기
                                 document.getElementById('responsavel').value = result['RESPON'] || '';
                                 document.getElementById('email').value = result['EMAIL'] || '';
                                 document.getElementById('motivo_demanda1').value = result['MOTIVO'] || '';
-                               // IMPORT 필드 업데이트
-                                if (result['IMPORT']) {
-                                    const importValue = result['IMPORT'].trim().toLowerCase(); // 값 정리
-                                    if (importValue === 'sim' || importValue === 'não') {
-                                        document.getElementById('importou_produtos').value = importValue.charAt(0).toUpperCase() + importValue.slice(1); // 첫 글자 대문자로 변환
-                                    }
-                                }
-
-                                // IMPORTK 필드 업데이트
-                                if (result['IMPORTK']) {
-                                    const importkValue = result['IMPORTK'].trim().toLowerCase(); // 값 정리
-                                    if (importkValue === 'sim' || importkValue === 'não') {
-                                        document.getElementById('importa_coreia').value = importkValue.charAt(0).toUpperCase() + importkValue.slice(1); // 첫 글자 대문자로 변환
-                                    }
-                                }
                                 document.getElementById('paises_importa').value = result['PAISES'] || '';
                                 document.getElementById('departamento_cargo').value = result['CARGO'] || '';
-    
-                            // 검색 결과 숨김
+
                                 resultsContainer.style.display = 'none';
                             });
+
                             resultsList.appendChild(listItem);
                         });
                         resultsContainer.style.display = 'block';
                     } else {
-                        // 검색 결과가 없는 경우
                         alert('해당 CNPJ와 일치하는 결과가 없습니다.');
                         resultsContainer.style.display = 'none';
                     }
                 });
-            } else {
-                console.error('검색 버튼(#cnpj-search)을 찾을 수 없습니다.');
+
             }
         });
     </script>     
@@ -425,8 +469,21 @@
                 <label for="timestamp">Timestamp:</label>
                 <input type="text" id="timestamp" name="timestamp" readonly><br>
 
-                <label for="razao_social" class="required">Razão Social (Nome completo do CNPJ):</label>
-                <input type="text" id="razao_social" name="razao_social" required><br>
+                <div>
+                    <label for="razao_social" class="required">Razão Social (Nome completo do CNPJ):</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="text" id="razao_social" name="razao_social" placeholder="Digite o nome da empresa" required>
+                        <button id="razao-social-search" type="button" style="background: none; border: none; cursor: pointer; font-size: 1.2em;">
+                            🔍
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 검색 결과 표시 영역 -->
+                <div id="razao-social-results" style="display: none; margin-top: 20px; border: 1px solid #ccc; border-radius: 5px; padding: 10px; background: #f9f9f9;">
+                    <h4>Resultados:</h4>
+                    <ul id="razao-social-results-list" style="list-style: none; padding: 0;"></ul>
+                </div>
 
                 <div>
                     <label for="cnpj" class="required" style="font-weight: bold;">
@@ -524,7 +581,6 @@
                     <label for="publicacao1" class="required">Publicação:</label>
                     <select id="publicacao1" name="publicacao1" style="width: 130px; margin-right: 10px;" required>
                         <option value="Non-Pub" style="font-size: 0.8em;">Non-Pub</option>
-                        <option value="Pub" style="font-size: 0.8em;">Pub</option>
                     </select>
                     <label for="produto_interesse1" class="required">Produto de interesse (English):</label>
                     <input type="text" id="produto_interesse1" name="produto_interesse1" required>
@@ -539,9 +595,6 @@
                 <label for="motivo_demanda1" class="required">Motivo da demanda:</label>
                 <textarea id="motivo_demanda1" name="motivo_demanda1" required></textarea><br>
 
-                <label for="perfil_busca_fornecedores1" class="required">Qual o perfil da busca de fornecedores?</label>
-                <textarea id="perfil_busca_fornecedores1" name="perfil_busca_fornecedores1" required></textarea><br>
-
                 <label for="empresa_coreana1" class="required">Nome da empresa Coreana:</label>
                 <input type="text" id="empresa_coreana1" name="empresa_coreana1" required><br>
             </div>
@@ -553,7 +606,6 @@
                     <label for="publicacao2">Publicação:</label>
                     <select id="publicacao2" name="publicacao2" style="width: 130px; margin-right: 10px;">
                         <option value="Non-Pub" style="font-size: 0.8em;">Non-Pub</option>
-                        <option value="Pub" style="font-size: 0.8em;">Pub</option>
                     </select>
                     <label for="produto_interesse2">Produto de interesse (English):</label>
                     <input type="text" id="produto_interesse2" name="produto_interesse2">
@@ -568,14 +620,36 @@
                 <label for="motivo_demanda2">Motivo da demanda:</label>
                 <textarea id="motivo_demanda2" name="motivo_demanda2"></textarea><br>
 
-                <label for="perfil_busca_fornecedores2">Qual o perfil da busca de fornecedores?</label>
-                <textarea id="perfil_busca_fornecedores2" name="perfil_busca_fornecedores2"></textarea><br>
-
                 <label for="empresa_coreana2">Nome da empresa Coreana:</label>
                 <input type="text" id="empresa_coreana2" name="empresa_coreana2"><br>
             </div>
 
             <!-- Seção 5 -->
+            <div class="form-section">
+                <h3>■ Produto e Demanda 3</h3>
+                <div class="input-container">
+                    <label for="publicacao2">Publicação:</label>
+                    <select id="publicacao2" name="publicacao2" style="width: 130px; margin-right: 10px;">
+                        <option value="Non-Pub" style="font-size: 0.8em;">Non-Pub</option>
+                    </select>
+                    <label for="produto_interesse2">Produto de interesse (English):</label>
+                    <input type="text" id="produto_interesse2" name="produto_interesse2">
+                </div>
+
+                <label for="codigo_ncm2">Código NCM (Pelo menos 6 dígitos, sem "."):</label>
+                <input type="text" id="codigo_ncm2" name="codigo_ncm2" placeholder="EX: 12122100" pattern="\d{6,}" oninput="this.value = this.value.replace(/\s/g, '');"><br>
+
+                <label for="quantidade_estimada2">Quantidade estimada:</label>
+                <input type="number" id="quantidade_estimada2" name="quantidade_estimada2"><br>
+
+                <label for="motivo_demanda2">Motivo da demanda:</label>
+                <textarea id="motivo_demanda2" name="motivo_demanda2"></textarea><br>
+
+                <label for="empresa_coreana2">Nome da empresa Coreana:</label>
+                <input type="text" id="empresa_coreana2" name="empresa_coreana2"><br>
+            </div>
+
+            <!-- Seção 6 -->
             <div class="form-section">
                 <h3>■ Importação</h3>
                 <label for="importou_produtos" class="required">Sua empresa já importou produtos diretamente?</label><br>
@@ -618,7 +692,7 @@
                 </div>
             </div>
 
-            <!-- Seção 6 -->
+            <!-- Seção 7 -->
             <div class="form-section">
                 <h3>■ Informações Adicionais</h3>
                 <label for="uso_consciente" class="required">Uso consciente das informações:</label><br>
