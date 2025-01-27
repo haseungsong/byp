@@ -75,7 +75,34 @@
                                 document.getElementById('website').value = result['SITE'] || '';
                                 document.getElementById('cnpj').value = result['CNPJ'] || '';
 
-                                // 검색 결과 숨김
+                                 // SEG., FOMATO, TFIXO 추가
+                                document.getElementById('segmento').value = result['SEG'] || '';
+                                document.getElementById('formato_negocio').value = result['FOMATO'] || '';
+                                document.getElementById('telefone_fixo').value = result['TFIXO'] || '';
+
+                                 // 새로 추가된 필드에 값 채우기
+                                document.getElementById('responsavel').value = result['RESPON'] || '';
+                                document.getElementById('email').value = result['EMAIL'] || '';
+                                document.getElementById('motivo_demanda1').value = result['MOTIVO'] || '';
+                               // IMPORT 필드 업데이트
+                                if (result['IMPORT']) {
+                                    const importValue = result['IMPORT'].trim().toLowerCase(); // 값 정리
+                                    if (importValue === 'sim' || importValue === 'não') {
+                                        document.getElementById('importou_produtos').value = importValue.charAt(0).toUpperCase() + importValue.slice(1); // 첫 글자 대문자로 변환
+                                    }
+                                }
+
+                                // IMPORTK 필드 업데이트
+                                if (result['IMPORTK']) {
+                                    const importkValue = result['IMPORTK'].trim().toLowerCase(); // 값 정리
+                                    if (importkValue === 'sim' || importkValue === 'não') {
+                                        document.getElementById('importa_coreia').value = importkValue.charAt(0).toUpperCase() + importkValue.slice(1); // 첫 글자 대문자로 변환
+                                    }
+                                }
+                                document.getElementById('paises_importa').value = result['PAISES'] || '';
+                                document.getElementById('departamento_cargo').value = result['CARGO'] || '';
+    
+                            // 검색 결과 숨김
                                 resultsContainer.style.display = 'none';
                             });
                             resultsList.appendChild(listItem);
